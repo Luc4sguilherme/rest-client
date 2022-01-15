@@ -1,7 +1,8 @@
 import { EditorState, basicSetup } from "@codemirror/basic-setup";
-import { EditorView, keymap } from "@codemirror/view";
+import { EditorView, keymap  } from "@codemirror/view";
 import { indentWithTab } from "@codemirror/commands";
 import { json } from "@codemirror/lang-json";
+
 
 export default function setupEditors() {
   const jsonRequestBody = document.querySelector("[data-json-request-body]");

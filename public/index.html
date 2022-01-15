@@ -6,13 +6,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>REST client</title>
   </head>
-  <body>
-    <div class="p-4">
+
+  <body hidden>
+    <div class="p-4 vh-100">
       <form data-form>
         <div class="input-group mb-4">
           <select
-            name=""
-            id=""
+            name="form-select"
+            id="form-select"
             class="form-select flex-grow-0 w-auto"
             data-method
           >
@@ -22,6 +23,10 @@
             <option value="PATCH">PATCH</option>
             <option value="DELETE">DELETE</option>
             <option value="OPTIONS">OPTIONS</option>
+            <option value="HEAD">HEAD</option>
+            <option value="PURGE">PURGE</option>
+            <option value="LINK">LINK</option>
+            <option value="UNLINK">UNLINK</option>
           </select>
           <input
             data-url
@@ -30,7 +35,7 @@
             class="form-control"
             placeholder="https://example.com"
           />
-          <button type="submit" class="btn btn-primary">Send</button>
+          <button type="submit" class="btn btn-primary ms-3">Send</button>
         </div>
 
         <ul class="nav nav-tabs" role="tablist">
@@ -118,7 +123,7 @@
             <div
               data-json-request-body
               class="overflow-auto"
-              style="max-height: 200px"
+              style="min-height: 100px; max-height: 750px"
             ></div>
           </div>
         </div>
@@ -173,7 +178,7 @@
             <div
               data-json-response-body
               class="overflow-auto"
-              style="max-height: 200px"
+              style="max-height: 450px"
             ></div>
           </div>
           <div
@@ -186,7 +191,7 @@
               style="
                 display: grid;
                 grid-template-columns: auto 1fr;
-                gap: 5rem 2rem;
+                gap: 2rem;
               "
               data-response-headers
             ></div>
@@ -204,7 +209,7 @@
           class="form-control"
           placeholder="Value"
         />
-        <button type="button" data-remove-btn class="btn btn-outline-danger">
+        <button type="button" data-remove-btn class="btn btn-outline-danger ms-3">
           Remove
         </button>
       </div>

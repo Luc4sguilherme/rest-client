@@ -4,6 +4,8 @@ import axios from "axios";
 import prettyBytes from "pretty-bytes";
 import setupEditor from "./setupEditor";
 
+const { requestEditor, updateResponseEditor } = setupEditor();
+
 const form = document.querySelector("[data-form]");
 const queryParamsContainer = document.querySelector("[data-query-params]");
 const requestHeadersContainer = document.querySelector(
@@ -29,12 +31,6 @@ document
     requestHeadersContainer.append(createKeyValuePair());
   });
 
-axios.interceptors.request.use((request) => {
-  request.customData = request.customData || {};
-  request.customData.startTime = new Date().getTime();
-  return request;
-});
-
 function updateEndTime(response) {
   response.customData = response.customData || {};
   response.customData.time =
@@ -42,43 +38,6 @@ function updateEndTime(response) {
 
   return response;
 }
-
-axios.interceptors.response.use(updateEndTime, (error) => {
-  return Promise.reject(updateEndTime(error.response));
-});
-
-const { requestEditor, updateResponseEditor } = setupEditor();
-
-form.addEventListener("submit", (event) => {
-  event.preventDefault();
-
-  let data;
-
-  try {
-    data = JSON.parse(requestEditor.state.doc.toString() || null);
-  } catch (error) {
-    alert("JSON data is malformed");
-    return;
-  }
-
-  axios({
-    url: document.querySelector("[data-url]").value,
-    method: document.querySelector("[data-method]").value,
-    params: keyValuePairToObjects(queryParamsContainer),
-    headers: keyValuePairToObjects(requestHeadersContainer),
-    data,
-  })
-    .catch((error) => error)
-    .then((response) => {
-      document
-        .querySelector("[data-response-section]")
-        .classList.remove("d-none");
-      updateResponseDetails(response);
-      updateResponseEditor(response.data);
-      updateResponseHeaders(response.headers);
-      console.log(response);
-    });
-});
 
 function updateResponseDetails(response) {
   const dataSize = JSON.stringify(response.data).length;
@@ -133,3 +92,47 @@ function keyValuePairToObjects(container) {
     };
   }, {});
 }
+
+axios.interceptors.request.use((request) => {
+  request.customData = request.customData || {};
+  request.customData.startTime = new Date().getTime();
+  return request;
+});
+
+axios.interceptors.response.use(updateEndTime, (error) => {
+  return Promise.reject(updateEndTime(error.response));
+});
+
+form.addEventListener("submit", (event) => {
+  event.preventDefault();
+
+  let data;
+
+  try {
+    data = JSON.parse(requestEditor.state.doc.toString() || null);
+  } catch (error) {
+    alert("JSON data is malformed");
+    return;
+  }
+
+  axios({
+    url: document.querySelector("[data-url]").value,
+    method: document.querySelector("[data-method]").value,
+    params: keyValuePairToObjects(queryParamsContainer),
+    headers: keyValuePairToObjects(requestHeadersContainer),
+    data,
+  })
+    .catch((error) => error)
+    .then((response) => {
+      document
+        .querySelector("[data-response-section]")
+        .classList.remove("d-none");
+      updateResponseDetails(response);
+      updateResponseEditor(response.data);
+      updateResponseHeaders(response.headers);
+    });
+});
+
+window.addEventListener("load", () => {
+  document.querySelector("body").removeAttribute("hidden");
+});
