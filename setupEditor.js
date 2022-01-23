@@ -1,0 +1,3 @@
+import{EditorState as o,basicSetup as d}from"./_snowpack/pkg/@codemirror/basic-setup.js";import{EditorView as e,keymap as p}from"./_snowpack/pkg/@codemirror/view.js";import{indentWithTab as m}from"./_snowpack/pkg/@codemirror/commands.js";import{json as u}from"./_snowpack/pkg/@codemirror/lang-json.js";export default function f(){const n=document.querySelector("[data-json-request-body]"),r=document.querySelector("[data-json-response-body]"),t=[d,p.of([m]),u(),o.tabSize.of(2)],i=new e({state:o.create({doc:`{
+	
+}`,extensions:t}),parent:n}),s=new e({state:o.create({doc:"{}",extensions:[...t,e.editable.of(!1)]}),parent:r});function a(c){s.dispatch({changes:{from:0,to:s.state.doc.length,insert:JSON.stringify(c,null,2)}})}return{requestEditor:i,updateResponseEditor:a}}
