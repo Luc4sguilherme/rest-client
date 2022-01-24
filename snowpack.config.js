@@ -10,7 +10,7 @@ module.exports = {
     "snowpack.config.js"
   ],
   mount: {
-    public: '/'
+    public: { url: '/', static: true, dot: true }
   },
   optimize: {
     minify: true,
