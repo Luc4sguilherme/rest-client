@@ -93,15 +93,40 @@ function keyValuePairToObjects(container) {
   }, {});
 }
 
-axios.interceptors.request.use((request) => {
-  request.customData = request.customData || {};
-  request.customData.startTime = new Date().getTime();
-  return request;
-});
+function createRequest(data) {
+  const request = axios.create({
+    baseURL: document.querySelector("[data-url]").value,
+    method: document.querySelector("[data-method]").value,
+    params: keyValuePairToObjects(queryParamsContainer),
+    headers: keyValuePairToObjects(requestHeadersContainer),
+    data,
+  });
 
-axios.interceptors.response.use(updateEndTime, (error) => {
-  return Promise.reject(updateEndTime(error.response));
-});
+  request.interceptors.request.use((request) => {
+    request.customData = request.customData || {};
+    request.customData.startTime = new Date().getTime();
+    return request;
+  });
+
+  request.interceptors.response.use(updateEndTime, (error) => {
+    return Promise.reject(updateEndTime(error.response));
+  });
+
+  return request;
+}
+
+function sendRequest(request) {
+  request()
+    .catch((error) => error)
+    .then((response) => {
+      document
+        .querySelector("[data-response-section]")
+        .classList.remove("d-none");
+      updateResponseDetails(response);
+      updateResponseEditor(response.data);
+      updateResponseHeaders(response.headers);
+    });
+}
 
 form.addEventListener("submit", (event) => {
   event.preventDefault();
@@ -115,22 +140,9 @@ form.addEventListener("submit", (event) => {
     return;
   }
 
-  axios({
-    url: document.querySelector("[data-url]").value,
-    method: document.querySelector("[data-method]").value,
-    params: keyValuePairToObjects(queryParamsContainer),
-    headers: keyValuePairToObjects(requestHeadersContainer),
-    data,
-  })
-    .catch((error) => error)
-    .then((response) => {
-      document
-        .querySelector("[data-response-section]")
-        .classList.remove("d-none");
-      updateResponseDetails(response);
-      updateResponseEditor(response.data);
-      updateResponseHeaders(response.headers);
-    });
+  const request = createRequest(data);
+
+  sendRequest(request)
 });
 
 window.addEventListener("load", () => {
